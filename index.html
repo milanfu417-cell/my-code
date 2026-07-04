@@ -145,10 +145,10 @@
     const GROUND_Y = 400;
     const PLAYER_X = 150;
     const CUBE_SIZE = 46;
-    const SCROLL_SPEED = 170;
-    const GRAVITY = 600;
-    const JUMP_IMPULSE = 320;
-    const CLIMB_SPEED = 260;
+    const SCROLL_SPEED = 240;
+    const GRAVITY = 1350;
+    const JUMP_IMPULSE = 480;
+    const CLIMB_SPEED = 450;
     const TOLERANCE = 14;
 
     let player, obstacles, particles, furthestX, holding, gameOver, lastTime, hintTimer;
@@ -278,12 +278,12 @@
         }
 
         ensureObstacles();
-        scoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 12);
+        scoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 8);
     }
 
     function crash() {
         gameOver = true;
-        finalScoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 12);
+        finalScoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 8);
         gameOverEl.classList.add('show');
     }
 
