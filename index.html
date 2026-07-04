@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Cube Dash Jr.</title>
+<title>Sky Climb: Don't Look Down</title>
 <style>
     html, body {
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden;
-        background: #1a1a2e;
-        font-family: 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif;
+        background: #000;
+        font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
         touch-action: none;
         -webkit-user-select: none;
         user-select: none;
@@ -25,49 +25,117 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #1a1a2e;
+        background: #000;
     }
 
     canvas {
         display: block;
         max-width: 100vw;
         max-height: 100vh;
-        aspect-ratio: 720 / 480;
-        background: #4fc3f7;
+        aspect-ratio: 480 / 800;
         touch-action: none;
-        border-radius: 8px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
     }
 
     #score {
         position: absolute;
-        top: 16px;
+        top: 14px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 26px;
+        font-size: 24px;
         font-weight: bold;
         color: #fff;
-        background: rgba(0,0,0,0.35);
-        padding: 6px 22px;
+        background: rgba(0,0,0,0.45);
+        padding: 6px 20px;
         border-radius: 20px;
         pointer-events: none;
         z-index: 5;
+        text-shadow: 0 0 8px rgba(0,255,255,0.6);
+        border: 2px solid rgba(255,255,255,0.25);
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    #score small {
+        display: block;
+        font-size: 11px;
+        font-weight: normal;
+        opacity: 0.8;
+    }
+
+    #stageLabel {
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #fff;
+        background: rgba(0,0,0,0.35);
+        padding: 3px 14px;
+        border-radius: 12px;
+        pointer-events: none;
+        z-index: 5;
+        transition: opacity 0.4s;
     }
 
     #hint {
         position: absolute;
-        top: 62px;
+        bottom: 22px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 15px;
+        font-size: 14px;
         font-weight: bold;
         color: #fff;
-        background: rgba(0,0,0,0.3);
-        padding: 4px 16px;
+        background: rgba(0,0,0,0.35);
+        padding: 5px 16px;
         border-radius: 14px;
         pointer-events: none;
         z-index: 5;
         transition: opacity 0.5s;
+    }
+
+    #muteBtn {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.4);
+        background: rgba(0,0,0,0.45);
+        color: #fff;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 6;
+        touch-action: none;
+        cursor: pointer;
+    }
+
+    #heightMeter {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 14px;
+        height: 220px;
+        border-radius: 8px;
+        background: rgba(0,0,0,0.4);
+        border: 2px solid rgba(255,255,255,0.3);
+        z-index: 5;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    #heightMeterFill {
+        width: 100%;
+        background: linear-gradient(0deg, #00fff2, #ff2fd6);
+        transition: height 0.15s linear;
+        border-radius: 6px 6px 0 0;
     }
 
     #gameOverScreen {
@@ -77,7 +145,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(20,10,40,0.6);
+        background: rgba(5,0,15,0.7);
         color: #fff;
         text-align: center;
         z-index: 10;
@@ -86,25 +154,27 @@
     #gameOverScreen.show { display: flex; }
 
     #gameOverScreen h1 {
-        font-size: 46px;
+        font-size: 40px;
         margin: 0 0 6px 0;
-        text-shadow: 0 3px 0 rgba(0,0,0,0.3);
+        text-shadow: 0 0 16px #ff2fd6, 0 0 4px #fff;
+        letter-spacing: 1px;
     }
 
     #gameOverScreen p {
-        font-size: 22px;
+        font-size: 20px;
         margin: 4px 0 20px 0;
+        text-shadow: 0 0 6px rgba(0,255,255,0.7);
     }
 
     #tryAgainBtn {
-        font-size: 30px;
+        font-size: 28px;
         font-weight: bold;
         color: #fff;
-        background: linear-gradient(180deg, #ff6b6b, #e63946);
+        background: linear-gradient(180deg, #ff2fd6, #7b2ff7);
         border: 5px solid #fff;
         border-radius: 50px;
-        padding: 22px 50px;
-        box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+        padding: 20px 46px;
+        box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 0 24px rgba(255,47,214,0.6);
         cursor: pointer;
         touch-action: none;
         z-index: 11;
@@ -112,18 +182,21 @@
 
     #tryAgainBtn:active {
         transform: translateY(4px);
-        box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 2px 0 rgba(0,0,0,0.4);
     }
 </style>
 </head>
 <body>
 <div id="gameWrap">
-    <canvas id="game" width="720" height="480"></canvas>
-    <div id="score">Score: 0</div>
-    <div id="hint">TAP to jump &middot; HOLD to climb stairs</div>
+    <canvas id="game" width="480" height="800"></canvas>
+    <div id="score">Score: 0<small id="bestLabel">Best: 0</small></div>
+    <div id="stageLabel">Forest Cave</div>
+    <div id="heightMeter"><div id="heightMeterFill" style="height:0%"></div></div>
+    <button id="muteBtn">&#128266;</button>
+    <div id="hint">TAP to jump &middot; HOLD to climb</div>
     <div id="gameOverScreen">
-        <h1>&#128165; Oops! &#128165;</h1>
-        <p id="finalScore">Score: 0</p>
+        <h1>&#9889; Caught! &#9889;</h1>
+        <p id="finalScore">Max Height: 0</p>
         <button id="tryAgainBtn">Try Again!</button>
     </div>
 </div>
@@ -134,33 +207,168 @@
     const ctx = canvas.getContext('2d');
     const wrap = document.getElementById('gameWrap');
     const scoreEl = document.getElementById('score');
+    const bestLabelEl = document.getElementById('bestLabel');
+    const stageLabelEl = document.getElementById('stageLabel');
+    const heightFillEl = document.getElementById('heightMeterFill');
     const hintEl = document.getElementById('hint');
     const gameOverEl = document.getElementById('gameOverScreen');
     const finalScoreEl = document.getElementById('finalScore');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const muteBtn = document.getElementById('muteBtn');
 
     const W = canvas.width;
     const H = canvas.height;
-
-    const GROUND_Y = 400;
-    const PLAYER_X = 150;
+    const PLAYER_X = W / 2;
+    const PLAYER_SCREEN_Y = Math.round(H * 0.6);
     const CUBE_SIZE = 46;
-    const SCROLL_SPEED = 240;
+    const MARGIN = 60;
+
+    const RISE_SPEED = 240;
     const GRAVITY = 1350;
     const JUMP_IMPULSE = 480;
     const CLIMB_SPEED = 450;
     const TOLERANCE = 14;
 
-    let player, obstacles, particles, furthestX, holding, gameOver, lastTime, hintTimer;
+    const SCORE_RATE = RISE_SPEED / 8;
+    const HAZARD_RATE = SCORE_RATE * 0.5;
+    const STUMBLE_PENALTY = 18;
+    const HAZARD_INITIAL_GAP = 30;
+
+    // ---------- Audio ----------
+    let audioCtx = null, masterGain = null, muted = false;
+    let musicTimer = null, nextStepTime = 0, stepIndex = 0;
+    const bassNotes = [110, 110, 130.81, 110, 146.83, 146.83, 174.61, 146.83];
+    const leadNotes = [440, 523.25, 659.25, 523.25, 493.88, 587.33, 739.99, 587.33,
+                        440, 523.25, 659.25, 783.99, 493.88, 587.33, 880, 739.99];
+    const stepDur = 60 / 150 / 2;
+
+    function initAudio() {
+        if (audioCtx) { if (audioCtx.state === 'suspended') audioCtx.resume(); return; }
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = muted ? 0 : 0.22;
+        masterGain.connect(audioCtx.destination);
+        nextStepTime = audioCtx.currentTime + 0.05;
+        stepIndex = 0;
+        musicTimer = setInterval(scheduler, 50);
+    }
+
+    function playTone(freq, startTime, duration, type, vol) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(vol, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.02);
+    }
+
+    function scheduler() {
+        while (nextStepTime < audioCtx.currentTime + 0.2) {
+            playTone(bassNotes[stepIndex % bassNotes.length], nextStepTime, stepDur * 0.9, 'square', 0.12);
+            const lead = leadNotes[stepIndex % leadNotes.length];
+            if (lead) playTone(lead, nextStepTime, stepDur * 0.55, 'square', 0.07);
+            nextStepTime += stepDur;
+            stepIndex++;
+        }
+    }
+
+    function playJumpSfx() {
+        if (!audioCtx) return;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(300, t);
+        osc.frequency.exponentialRampToValueAtTime(780, t + 0.09);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.15);
+    }
+
+    function playStumbleSfx() {
+        if (!audioCtx) return;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(420, t);
+        osc.frequency.exponentialRampToValueAtTime(90, t + 0.35);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.42);
+    }
+
+    muteBtn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        initAudio();
+        muted = !muted;
+        if (masterGain) masterGain.gain.value = muted ? 0 : 0.22;
+        muteBtn.textContent = muted ? '\u{1F507}' : '\u{1F50A}';
+    });
+
+    // ---------- Themes ----------
+    const THEMES = [
+        { name: 'Forest Cave', min: 0, max: 20, sky: ['#bfe6b5', '#4f8c40'], platform: '#7a5230', edge: '#8fce6a', glow: 'rgba(143,206,106,0.5)', decor: 'leaf' },
+        { name: 'Volcano Depths', min: 20, max: 50, sky: ['#3a1212', '#7a1f0d'], platform: '#2b2b2e', edge: '#ff6a00', glow: 'rgba(255,106,0,0.6)', decor: 'ember' },
+        { name: 'Neon City', min: 50, max: 100, sky: ['#0d0221', '#240046'], platform: '#1a1a2e', edge: '#00fff2', glow: 'rgba(0,255,242,0.6)', decor: 'neon' },
+        { name: 'Deep Space', min: 100, max: 1e9, sky: ['#00000f', '#12122a'], platform: '#3a3a4a', edge: '#a78bfa', glow: 'rgba(167,139,250,0.6)', decor: 'star' }
+    ];
+
+    function hexToRgb(hex) {
+        const v = parseInt(hex.slice(1), 16);
+        return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+    }
+    function lerpColor(a, b, t) {
+        const ca = hexToRgb(a), cb = hexToRgb(b);
+        const r = Math.round(ca[0] + (cb[0] - ca[0]) * t);
+        const g = Math.round(ca[1] + (cb[1] - ca[1]) * t);
+        const bl = Math.round(ca[2] + (cb[2] - ca[2]) * t);
+        return `rgb(${r},${g},${bl})`;
+    }
+
+    function getThemeBlend(score) {
+        let idx = THEMES.findIndex(t => score < t.max);
+        if (idx < 0) idx = THEMES.length - 1;
+        const cur = THEMES[idx];
+        const prev = THEMES[Math.max(0, idx - 1)];
+        const blendZone = 8;
+        let blend = 0;
+        if (idx > 0) {
+            const distIntoStage = score - cur.min;
+            if (distIntoStage < blendZone) blend = 1 - Math.max(0, distIntoStage) / blendZone;
+        }
+        return { cur, prev, blend, idx };
+    }
+
+    // ---------- Game state ----------
+    let player, obstacles, particles, popups, furthestY;
+    let score, bestScore, hazardHeight, gameOver, holding, lastTime;
+    let screenShake, stumbleTimer;
 
     function resetGame() {
-        player = { worldX: 0, height: 0, vy: 0, rotation: 0 };
+        player = { worldY: 0, airHeight: 0, vy: 0, rotation: 0 };
         obstacles = [];
         particles = [];
-        furthestX = 0;
-        holding = false;
+        popups = [];
+        furthestY = 0;
+        score = 0;
+        bestScore = Math.max(bestScore || 0, 0);
+        hazardHeight = -HAZARD_INITIAL_GAP;
         gameOver = false;
-        hintTimer = 5;
+        holding = false;
+        screenShake = 0;
+        stumbleTimer = 0;
         gameOverEl.classList.remove('show');
         hintEl.style.opacity = '1';
         ensureObstacles();
@@ -172,73 +380,87 @@
     function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
     function ensureObstacles() {
-        const lookAhead = player.worldX + (W - PLAYER_X) + 900;
+        const lookAhead = player.worldY + PLAYER_SCREEN_Y + 900;
         let prevType = obstacles.length ? obstacles[obstacles.length - 1].type : null;
-        while (furthestX < lookAhead) {
-            furthestX += rand(300, 480);
-            let type = pick(['spike', 'block', 'cliff', 'spike', 'block']);
-            if (type === 'cliff' && prevType === 'cliff') type = 'block';
-            let ob = { type, worldX: furthestX };
-            if (type === 'spike') {
-                ob.width = 40; ob.height = 30;
-                furthestX += ob.width;
-            } else if (type === 'block') {
-                ob.width = 44; ob.height = 40;
-                furthestX += ob.width;
-            } else if (type === 'cliff') {
-                ob.rampWidth = 170; ob.platformWidth = 150; ob.platformHeight = 195;
-                ob.rampEnd = ob.worldX + ob.rampWidth;
-                ob.zoneEnd = ob.rampEnd + ob.platformWidth;
-                furthestX = ob.zoneEnd;
+        while (furthestY < lookAhead) {
+            furthestY += rand(300, 480);
+            let type = pick(['gap', 'chasm', 'ladder', 'gap', 'chasm']);
+            if (type === 'ladder' && prevType === 'ladder') type = 'chasm';
+            let ob = { type, worldY: furthestY, resolved: false };
+            if (type === 'gap') {
+                ob.thickness = 40; ob.clear = 30;
+                furthestY += ob.thickness;
+            } else if (type === 'chasm') {
+                ob.thickness = 44; ob.clear = 40;
+                furthestY += ob.thickness;
+            } else if (type === 'ladder') {
+                ob.rampThickness = 170; ob.platformThickness = 150; ob.platformHeight = 195;
+                ob.rampEnd = ob.worldY + ob.rampThickness;
+                ob.zoneEnd = ob.rampEnd + ob.platformThickness;
+                furthestY = ob.zoneEnd;
             }
             obstacles.push(ob);
             prevType = type;
         }
         obstacles = obstacles.filter(o => {
-            const w = o.type === 'cliff' ? o.zoneEnd - o.worldX : o.width;
-            return o.worldX + w > player.worldX - 200;
+            const span = o.type === 'ladder' ? o.zoneEnd - o.worldY : o.thickness;
+            return o.worldY + span > player.worldY - 200;
         });
     }
 
-    function findActiveCliff() {
+    function findActiveLadder() {
         for (const o of obstacles) {
-            if (o.type === 'cliff' && player.worldX >= o.worldX - 5 && player.worldX <= o.zoneEnd + 5) return o;
+            if (o.type === 'ladder' && player.worldY >= o.worldY - 5 && player.worldY <= o.zoneEnd + 5) return o;
         }
         return null;
     }
 
-    function groundLevelAt(cliff) {
-        if (!cliff) return 0;
-        if (player.worldX >= cliff.rampEnd && player.worldX <= cliff.zoneEnd) return cliff.platformHeight;
+    function groundLevelAt(ladder) {
+        if (!ladder || ladder.resolved) return 0;
+        if (player.worldY >= ladder.rampEnd && player.worldY <= ladder.zoneEnd) return ladder.platformHeight;
         return 0;
     }
 
+    function stumble() {
+        score = Math.max(0, score - STUMBLE_PENALTY);
+        stumbleTimer = 0.5;
+        screenShake = 8;
+        popups.push({ worldY: player.worldY, x: PLAYER_X + 30, text: '-' + STUMBLE_PENALTY, alpha: 1, vy: -40 });
+        playStumbleSfx();
+        if (score <= hazardHeight) crash();
+    }
+
+    function crash() {
+        gameOver = true;
+        finalScoreEl.textContent = 'Max Height: ' + Math.floor(bestScore);
+        gameOverEl.classList.add('show');
+    }
+
     function update(dt) {
-        player.worldX += SCROLL_SPEED * dt;
+        player.worldY += RISE_SPEED * dt;
+        hazardHeight += HAZARD_RATE * dt;
 
-        if (hintTimer > 0) {
-            hintTimer -= dt;
-            if (hintTimer <= 0) hintEl.style.opacity = '0';
-        }
+        if (stumbleTimer > 0) stumbleTimer -= dt;
+        if (screenShake > 0) screenShake = Math.max(0, screenShake - dt * 40);
 
-        const activeCliff = findActiveCliff();
-        const inRamp = activeCliff && player.worldX >= activeCliff.worldX && player.worldX < activeCliff.rampEnd;
-        const G = groundLevelAt(activeCliff);
+        const activeLadder = findActiveLadder();
+        const inRamp = activeLadder && !activeLadder.resolved && player.worldY >= activeLadder.worldY && player.worldY < activeLadder.rampEnd;
+        const G = groundLevelAt(activeLadder);
 
         if (holding && inRamp) {
             player.vy = CLIMB_SPEED;
-            player.height += player.vy * dt;
+            player.airHeight += player.vy * dt;
         } else {
             player.vy -= GRAVITY * dt;
-            player.height += player.vy * dt;
+            player.airHeight += player.vy * dt;
         }
 
-        if (player.height < G) {
-            player.height = G;
+        if (player.airHeight < G) {
+            player.airHeight = G;
             player.vy = 0;
         }
 
-        const isAirborne = player.height > G + 2;
+        const isAirborne = player.airHeight > G + 2;
         if (isAirborne && !(holding && inRamp)) {
             player.rotation += 480 * dt;
         } else {
@@ -246,157 +468,229 @@
         }
 
         if (isAirborne && Math.random() < 0.5) {
-            particles.push({ worldX: player.worldX - CUBE_SIZE / 2, height: player.height - CUBE_SIZE / 2, alpha: 0.6, size: 8 });
+            particles.push({ worldY: player.worldY, x: PLAYER_X - CUBE_SIZE / 2, airHeight: player.airHeight - CUBE_SIZE / 2, alpha: 0.6, size: 8 });
         }
+
+        if (inRamp) {
+            const requiredClearance = activeLadder.platformHeight * (player.worldY - activeLadder.worldY) / activeLadder.rampThickness;
+            if (player.airHeight < requiredClearance - TOLERANCE) {
+                activeLadder.resolved = true;
+                stumble();
+            }
+        }
+
+        const cubeBottom = -player.airHeight, cubeTop = cubeBottom - CUBE_SIZE;
+        for (const o of obstacles) {
+            if (o.type === 'ladder' || o.resolved) continue;
+            const oTop = -(o.worldY + o.thickness - player.worldY);
+            const oBottom = -(o.worldY - player.worldY);
+            if (cubeTop < oBottom && cubeBottom > oTop) {
+                if (player.airHeight < o.clear) {
+                    o.resolved = true;
+                    stumble();
+                }
+            }
+        }
+
+        if (stumbleTimer <= 0) {
+            score += SCORE_RATE * dt;
+        }
+        bestScore = Math.max(bestScore, score);
+
+        updateParticlesAndPopups(dt);
+        ensureObstacles();
+        updateUI();
+
+        if (score <= hazardHeight) crash();
+    }
+
+    function updateParticlesAndPopups(dt) {
         for (const p of particles) { p.alpha -= dt * 1.5; p.size += dt * 6; }
         particles = particles.filter(p => p.alpha > 0);
 
-        if (inRamp) {
-            const requiredClearance = activeCliff.platformHeight * (player.worldX - activeCliff.worldX) / activeCliff.rampWidth;
-            if (player.height < requiredClearance - TOLERANCE) {
-                crash();
-                return;
-            }
-        }
+        const theme = getThemeBlend(score).cur;
+        if (Math.random() < 0.6) spawnThemeParticle(theme);
 
-        const cubeBottom = GROUND_Y - player.height;
-        const cubeTop = cubeBottom - CUBE_SIZE;
-        const cubeLeft = PLAYER_X - CUBE_SIZE / 2;
-        const cubeRight = PLAYER_X + CUBE_SIZE / 2;
-
-        for (const o of obstacles) {
-            if (o.type === 'cliff') continue;
-            const screenX = o.worldX - player.worldX + PLAYER_X;
-            const oLeft = screenX;
-            const oRight = screenX + o.width;
-            const oTop = GROUND_Y - o.height;
-            const oBottom = GROUND_Y;
-            if (cubeRight > oLeft && cubeLeft < oRight && cubeBottom > oTop && cubeTop < oBottom) {
-                crash();
-                return;
-            }
-        }
-
-        ensureObstacles();
-        scoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 8);
+        for (const p of popups) { p.worldY += p.vy * dt; p.alpha -= dt * 1.2; }
+        popups = popups.filter(p => p.alpha > 0);
     }
 
-    function crash() {
-        gameOver = true;
-        finalScoreEl.textContent = 'Score: ' + Math.floor(player.worldX / 8);
-        gameOverEl.classList.add('show');
+    let decorParticles = [];
+    function spawnThemeParticle(theme) {
+        if (decorParticles.length > 45) return;
+        const spawnWorldY = player.worldY - PLAYER_SCREEN_Y + rand(-50, H - PLAYER_SCREEN_Y + 50);
+        if (theme.decor === 'leaf') {
+            decorParticles.push({ kind: 'leaf', worldY: spawnWorldY, x: rand(0, W), vx: rand(-10, -30), vDrift: rand(20, 40), size: rand(5, 9), life: 6, age: 0, color: '#a8e08a' });
+        } else if (theme.decor === 'ember') {
+            decorParticles.push({ kind: 'ember', worldY: spawnWorldY, x: rand(0, W), vx: rand(-5, 5), vDrift: rand(30, 60), size: rand(3, 6), life: 3, age: 0, color: pick(['#ff6a00', '#ffae42']) });
+        } else if (theme.decor === 'neon') {
+            decorParticles.push({ kind: 'neon', worldY: spawnWorldY, x: rand(0, W), vx: 0, vDrift: rand(10, 20), size: rand(2, 4), life: 4, age: 0, color: pick(['#00fff2', '#ff2fd6']) });
+        } else if (theme.decor === 'star') {
+            decorParticles.push({ kind: 'star', worldY: spawnWorldY, x: rand(0, W), vx: 0, vDrift: rand(2, 8), size: rand(1, 3), life: 8, age: 0, color: '#ffffff', twinkle: rand(0, 6.28) });
+        }
     }
 
+    function updateDecorParticles(dt) {
+        for (const p of decorParticles) {
+            p.age += dt;
+            p.x += p.vx * dt;
+            p.worldY -= p.vDrift * dt;
+            if (p.twinkle !== undefined) p.twinkle += dt * 3;
+        }
+        decorParticles = decorParticles.filter(p => p.age < p.life);
+    }
+
+    function updateUI() {
+        scoreEl.innerHTML = 'Score: ' + Math.floor(score) + '<small id="bestLabel">Best: ' + Math.floor(bestScore) + '</small>';
+        const theme = getThemeBlend(score).cur;
+        stageLabelEl.textContent = theme.name;
+        const stageMax = theme.max === 1e9 ? theme.min + 100 : theme.max;
+        const pct = Math.max(0, Math.min(1, (score - theme.min) / (stageMax - theme.min)));
+        heightFillEl.style.height = (pct * 100) + '%';
+    }
+
+    // ---------- Rendering ----------
     function drawBackground() {
-        const grad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-        grad.addColorStop(0, '#4facfe');
-        grad.addColorStop(1, '#a1e9ff');
+        const { cur, prev, blend } = getThemeBlend(score);
+        const topColor = blend > 0 ? lerpColor(cur.sky[0], prev.sky[0], blend) : cur.sky[0];
+        const botColor = blend > 0 ? lerpColor(cur.sky[1], prev.sky[1], blend) : cur.sky[1];
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, topColor);
+        grad.addColorStop(1, botColor);
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, W, GROUND_Y);
+        ctx.fillRect(0, 0, W, H);
 
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        for (let i = 0; i < 5; i++) {
-            const cx = ((i * 260) - (player.worldX * 0.25) % 1300 + 1300) % (W + 300) - 150;
-            const cy = 60 + (i % 3) * 40;
-            drawCloud(cx, cy);
-        }
-    }
-
-    function drawCloud(x, y) {
-        ctx.beginPath();
-        ctx.arc(x, y, 22, 0, Math.PI * 2);
-        ctx.arc(x + 24, y - 10, 26, 0, Math.PI * 2);
-        ctx.arc(x + 48, y, 22, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    function drawGround() {
-        ctx.fillStyle = '#7b3fa0';
-        ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
-
-        const checkerSize = 40;
-        const offset = ((player.worldX % checkerSize) + checkerSize) % checkerSize;
-        ctx.fillStyle = '#9b59d0';
-        for (let x = -checkerSize; x < W + checkerSize; x += checkerSize * 2) {
-            ctx.fillRect(x - offset, GROUND_Y, checkerSize, 14);
+        if (cur.decor === 'volcano' || cur.name === 'Volcano Depths') {
+            const glowY = H - 120 + Math.sin(performance.now() / 400) * 20;
+            const lavaGrad = ctx.createLinearGradient(0, glowY - 60, 0, H);
+            lavaGrad.addColorStop(0, 'rgba(255,106,0,0)');
+            lavaGrad.addColorStop(1, 'rgba(255,80,0,0.35)');
+            ctx.fillStyle = lavaGrad;
+            ctx.fillRect(0, glowY - 60, W, H - (glowY - 60));
         }
 
-        ctx.fillStyle = '#ffe066';
-        ctx.fillRect(0, GROUND_Y, W, 5);
-    }
-
-    function drawSpike(screenX, width, height) {
-        ctx.fillStyle = '#ff6b35';
-        ctx.beginPath();
-        ctx.moveTo(screenX, GROUND_Y);
-        ctx.lineTo(screenX + width / 2, GROUND_Y - height);
-        ctx.lineTo(screenX + width, GROUND_Y);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
-
-    function drawBlock(screenX, width, height) {
-        ctx.fillStyle = '#2d6fe0';
-        roundRect(screenX, GROUND_Y - height, width, height, 8);
-        ctx.fill();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
-
-    function drawCliff(o) {
-        const screenX = o.worldX - player.worldX + PLAYER_X;
-        const steps = 6;
-        ctx.fillStyle = '#ff9f1c';
-        for (let i = 0; i < steps; i++) {
-            const stepH = o.platformHeight * (i + 1) / steps;
-            const stepX = screenX + (o.rampWidth * i) / steps;
-            const stepW = o.rampWidth / steps;
-            ctx.fillRect(stepX, GROUND_Y - stepH, stepW + 1, stepH);
+        for (const p of decorParticles) {
+            const screenY = PLAYER_SCREEN_Y - (p.worldY - player.worldY);
+            if (screenY < -20 || screenY > H + 20) continue;
+            const lifeFrac = 1 - p.age / p.life;
+            ctx.globalAlpha = Math.max(0, lifeFrac);
+            if (p.kind === 'star') {
+                const tw = 0.5 + 0.5 * Math.sin(p.twinkle);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = Math.max(0, lifeFrac) * tw;
+                ctx.fillRect(p.x, screenY, p.size, p.size);
+            } else if (p.kind === 'leaf') {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.ellipse(p.x, screenY, p.size, p.size * 0.6, performance.now() / 300, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (p.kind === 'ember') {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, screenY, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (p.kind === 'neon') {
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, screenY, p.size, p.size);
+            }
         }
-        ctx.strokeStyle = '#ffe066';
+        ctx.globalAlpha = 1;
+    }
+
+    function drawShaft(theme) {
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fillRect(0, 0, MARGIN, H);
+        ctx.fillRect(W - MARGIN, 0, MARGIN, H);
+        ctx.strokeStyle = theme.edge;
+        ctx.globalAlpha = 0.35;
         ctx.lineWidth = 2;
-        for (let i = 0; i < steps; i++) {
-            const stepH = o.platformHeight * (i + 1) / steps;
-            const stepX = screenX + (o.rampWidth * i) / steps;
-            const stepW = o.rampWidth / steps;
-            ctx.strokeRect(stepX, GROUND_Y - stepH, stepW, stepH);
+        const tileSize = 40;
+        const offset = ((player.worldY % tileSize) + tileSize) % tileSize;
+        for (let y = -tileSize; y < H + tileSize; y += tileSize) {
+            const sy = y + offset;
+            ctx.beginPath();
+            ctx.moveTo(0, sy); ctx.lineTo(MARGIN, sy);
+            ctx.moveTo(W - MARGIN, sy); ctx.lineTo(W, sy);
+            ctx.stroke();
         }
-
-        ctx.fillStyle = '#7b3fa0';
-        ctx.fillRect(screenX + o.rampWidth, GROUND_Y - o.platformHeight, o.platformWidth, o.platformHeight);
-        ctx.fillStyle = '#ffe066';
-        ctx.fillRect(screenX + o.rampWidth, GROUND_Y - o.platformHeight, o.platformWidth, 6);
+        ctx.globalAlpha = 1;
     }
 
-    function roundRect(x, y, w, h, r) {
+    function drawGapObstacle(o, theme) {
+        const screenTop = PLAYER_SCREEN_Y - (o.worldY + o.thickness - player.worldY);
+        const screenBottom = PLAYER_SCREEN_Y - (o.worldY - player.worldY);
+        if (screenBottom < -20 || screenTop > H + 20) return;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(MARGIN, screenTop, W - MARGIN * 2, screenBottom - screenTop);
+
+        ctx.fillStyle = theme.edge;
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(MARGIN, screenBottom - 4, W - MARGIN * 2, 4);
+        ctx.shadowColor = theme.glow;
+        ctx.shadowBlur = 12;
+        ctx.fillRect(MARGIN, screenBottom - 4, W - MARGIN * 2, 4);
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+    }
+
+    function drawLadderObstacle(o, theme) {
+        const rampTopScreen = PLAYER_SCREEN_Y - (o.rampEnd - player.worldY);
+        const rampBotScreen = PLAYER_SCREEN_Y - (o.worldY - player.worldY);
+        const platTopScreen = PLAYER_SCREEN_Y - (o.zoneEnd - player.worldY);
+
+        if (rampBotScreen < -20 || platTopScreen > H + 20) return;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(MARGIN, rampTopScreen, W - MARGIN * 2, rampBotScreen - rampTopScreen);
+
+        const railX1 = W / 2 - 34, railX2 = W / 2 + 34;
+        ctx.strokeStyle = theme.edge;
+        ctx.lineWidth = 6;
         ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
+        ctx.moveTo(railX1, rampBotScreen); ctx.lineTo(railX1, rampTopScreen);
+        ctx.moveTo(railX2, rampBotScreen); ctx.lineTo(railX2, rampTopScreen);
+        ctx.stroke();
+
+        ctx.lineWidth = 4;
+        const rungCount = 7;
+        for (let i = 0; i <= rungCount; i++) {
+            const ry = rampBotScreen + (rampTopScreen - rampBotScreen) * (i / rungCount);
+            ctx.beginPath();
+            ctx.moveTo(railX1, ry); ctx.lineTo(railX2, ry);
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = theme.platform;
+        ctx.fillRect(MARGIN, platTopScreen, W - MARGIN * 2, rampTopScreen - platTopScreen);
+        ctx.fillStyle = theme.edge;
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(MARGIN, rampTopScreen - 4, W - MARGIN * 2, 4);
+        ctx.globalAlpha = 1;
     }
 
     function drawPlayer() {
-        const x = PLAYER_X;
-        const y = GROUND_Y - player.height - CUBE_SIZE / 2;
+        const screenY = PLAYER_SCREEN_Y - player.airHeight - CUBE_SIZE / 2;
+        const shakeX = screenShake > 0 ? rand(-screenShake, screenShake) : 0;
+        const shakeY = screenShake > 0 ? rand(-screenShake, screenShake) : 0;
 
         ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate((player.rotation * Math.PI) / 180);
+        ctx.translate(PLAYER_X + shakeX, screenY + shakeY);
+        const wobble = stumbleTimer > 0 ? Math.sin(stumbleTimer * 40) * 25 : 0;
+        ctx.rotate(((player.rotation + wobble) * Math.PI) / 180);
 
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
         roundRect(-CUBE_SIZE / 2 + 4, -CUBE_SIZE / 2 + 6, CUBE_SIZE, CUBE_SIZE, 10);
         ctx.fill();
 
         const grad = ctx.createLinearGradient(-CUBE_SIZE / 2, -CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2);
-        grad.addColorStop(0, '#00e5ff');
-        grad.addColorStop(1, '#2979ff');
+        if (stumbleTimer > 0) {
+            grad.addColorStop(0, '#ff8a8a');
+            grad.addColorStop(1, '#e63946');
+        } else {
+            grad.addColorStop(0, '#00e5ff');
+            grad.addColorStop(1, '#2979ff');
+        }
         ctx.fillStyle = grad;
         roundRect(-CUBE_SIZE / 2, -CUBE_SIZE / 2, CUBE_SIZE, CUBE_SIZE, 10);
         ctx.fill();
@@ -414,7 +708,11 @@
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.beginPath();
-        ctx.arc(0, 2, 9, 0.15 * Math.PI, 0.85 * Math.PI);
+        if (stumbleTimer > 0) {
+            ctx.arc(0, 6, 7, Math.PI * 1.15, Math.PI * 1.85);
+        } else {
+            ctx.arc(0, 2, 9, 0.15 * Math.PI, 0.85 * Math.PI);
+        }
         ctx.stroke();
 
         ctx.restore();
@@ -422,34 +720,55 @@
 
     function drawParticles() {
         for (const p of particles) {
-            const screenX = p.worldX - player.worldX + PLAYER_X;
-            const screenY = GROUND_Y - p.height;
+            const screenY = PLAYER_SCREEN_Y - p.airHeight;
             ctx.fillStyle = `rgba(0, 229, 255, ${Math.max(0, p.alpha)})`;
-            ctx.fillRect(screenX - p.size / 2, screenY - p.size / 2, p.size, p.size);
+            ctx.fillRect(p.x - p.size / 2, screenY - p.size / 2, p.size, p.size);
         }
     }
 
+    function drawPopups() {
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 22px sans-serif';
+        for (const p of popups) {
+            const screenY = PLAYER_SCREEN_Y - (p.worldY - player.worldY);
+            ctx.fillStyle = `rgba(255, 90, 90, ${Math.max(0, p.alpha)})`;
+            ctx.fillText(p.text, p.x, screenY);
+        }
+    }
+
+    function roundRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+
     function draw() {
+        const theme = getThemeBlend(score).cur;
         drawBackground();
-        drawGround();
+        drawShaft(theme);
 
         for (const o of obstacles) {
-            const screenX = o.worldX - player.worldX + PLAYER_X;
-            if (screenX > W + 250 || screenX < -300) continue;
-            if (o.type === 'spike') drawSpike(screenX, o.width, o.height);
-            else if (o.type === 'block') drawBlock(screenX, o.width, o.height);
-            else if (o.type === 'cliff') drawCliff(o);
+            if (o.type === 'gap' || o.type === 'chasm') drawGapObstacle(o, theme);
+            else if (o.type === 'ladder') drawLadderObstacle(o, theme);
         }
 
         drawParticles();
         drawPlayer();
+        drawPopups();
     }
 
     function loop(now) {
         const dt = Math.min(0.05, (now - lastTime) / 1000);
         lastTime = now;
 
-        if (!gameOver) update(dt);
+        if (!gameOver) {
+            update(dt);
+            updateDecorParticles(dt);
+        }
         draw();
 
         requestAnimationFrame(loop);
@@ -457,12 +776,14 @@
 
     function onPress(e) {
         if (e.cancelable) e.preventDefault();
+        initAudio();
         if (gameOver) return;
         holding = true;
-        const activeCliff = findActiveCliff();
-        const G = groundLevelAt(activeCliff);
-        if (player.height <= G + 1) {
+        const activeLadder = findActiveLadder();
+        const G = groundLevelAt(activeLadder);
+        if (player.airHeight <= G + 1) {
             player.vy = JUMP_IMPULSE;
+            playJumpSfx();
         }
     }
 
