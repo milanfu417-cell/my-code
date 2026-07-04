@@ -2,9 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My First Website</title>
+    <title>A Surprise For My Family</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fdf0f5, #f0f6ff);
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #444;
+            font-size: 1.2em;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 14px 28px;
+            font-size: 1.1em;
+            color: white;
+            background: #d63384;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
+            transition: transform 0.15s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <h1>Welcome to my first website</h1>
+    <p>Thank you for always believing in me and cheering me on.
+       This little page is just for you, to say how grateful I am
+       to have such a wonderful family. Click the button for a surprise!</p>
+    <button onclick="launchConfetti()">🎉 Click for Confetti!</button>
+
+    <script>
+        function launchConfetti() {
+            const colors = ['#d63384', '#ffb703', '#06d6a0', '#118ab2', '#f72585', '#ffd166'];
+
+            for (let i = 0; i < 120; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+
+                const fallDuration = 2 + Math.random() * 2;
+                const fallDelay = Math.random() * 0.5;
+                const rotation = Math.random() * 360;
+
+                piece.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(100vh) rotate(${rotation}deg)`, opacity: 1 }
+                ], {
+                    duration: fallDuration * 1000,
+                    delay: fallDelay * 1000,
+                    easing: 'ease-in',
+                    fill: 'forwards'
+                });
+
+                document.body.appendChild(piece);
+
+                setTimeout(() => piece.remove(), (fallDuration + fallDelay) * 1000 + 200);
+            }
+        }
+    </script>
 </body>
 </html>
